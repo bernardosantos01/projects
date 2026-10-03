@@ -86,7 +86,7 @@ The README includes a short section explaining two concrete options for a larger
 Install dependencies:
 
 ```bash
-cd /Users/bernardosantos/benprojects/efficio/data-pipeline
+cd ../data-pipeline
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
