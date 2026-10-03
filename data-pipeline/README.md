@@ -119,7 +119,7 @@ data-pipeline/
 1. Go to the project directory:
 
 ```bash
-cd /Users/bernardosantos/benprojects/efficio/data-pipeline
+cd ../data-pipeline
 ```
 
 2. Create a virtual environment:
