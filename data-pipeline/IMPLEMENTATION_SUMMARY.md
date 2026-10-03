@@ -6,12 +6,6 @@ This document summarizes the deliverables for the Data Engineering Technical Tas
 
 ## 1. Project structure
 
-The project is located in:
-
-```text
-/Users/bernardosantos/benprojects/efficio/data-pipeline/
-```
-
 Directory layout:
 
 ```text
