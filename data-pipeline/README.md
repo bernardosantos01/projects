@@ -34,7 +34,6 @@ The input JSON contains many more nested fields and repeated groups, including a
 - `src/enricher.py`: family-tree join and output checks.
 - `src/models.py`: Pydantic data models and processing statistics.
 - `src/pipeline.py`: pipeline orchestration and Parquet writing.
-- `src/view_output.py`: command-line Parquet preview utility.
 - `tests/test_enricher.py`: focused pytest test for enrichment.
 
 ## Setup and usage
@@ -63,12 +62,6 @@ python main.py \
 ```
 
 Validation is enabled by default. Use `--no-validate` to disable output checks. The default output path is `output/enriched_companies.parquet`.
-
-Preview the output:
-
-```bash
-python -m src.view_output --file output/enriched_companies.parquet --limit 10
-```
 
 ## Quality checks and testing
 
