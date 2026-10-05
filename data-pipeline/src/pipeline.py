@@ -80,7 +80,8 @@ class CompanyDataPipeline:
                 is_valid = self.data_enricher.validate_enriched_data(enriched_df)
                 
                 if not is_valid:
-                    logger.warning("Data validation failed, but proceeding with output")
+                    logger.error("Data validation failed; refusing to write output")
+                    return None
             
             # Step 4: Save to parquet
             logger.info("Step 5: Saving to parquet")

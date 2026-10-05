@@ -2,11 +2,13 @@
 
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict
 
 
 class CompanyRecord(BaseModel):
     """Pydantic model for company record validation."""
+    model_config = ConfigDict(populate_by_name=True)
+
     duns: str
     primary_name: str
     industry_code: Optional[str] = None
@@ -22,22 +24,18 @@ class CompanyRecord(BaseModel):
     parent_company_id: Optional[str] = None
     parent_company_name: Optional[str] = None
     
-    class Config:
-        populate_by_name = True
-
-
 class FamilyTreeMember(BaseModel):
     """Pydantic model for family tree member validation."""
+    model_config = ConfigDict(populate_by_name=True)
+
     duns: str
-    primary_name: str
+    primary_name: Optional[str] = None
     hierarchy_level: Optional[int] = None
     family_tree_roles: Optional[List[str]] = None
     parent_duns: Optional[str] = None
+    global_ultimate_duns: Optional[str] = None
+    family_tree_members_count: Optional[int] = None
     
-    class Config:
-        populate_by_name = True
-
-
 @dataclass
 class ProcessingStats:
     """Statistics for data processing."""

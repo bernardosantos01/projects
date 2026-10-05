@@ -36,9 +36,9 @@ def main():
     )
     parser.add_argument(
         "--validate",
-        type=bool,
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Validate data before saving (default: True)"
+        help="Validate data before saving (default: enabled; use --no-validate to disable)"
     )
     
     args = parser.parse_args()

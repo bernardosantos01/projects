@@ -34,6 +34,8 @@ class DataEnricher:
             Tuple of (enriched DataFrame, processing stats)
         """
         logger.info(f"Starting join/enrichment for {len(companies)} companies")
+
+        self.stats = ProcessingStats()
         
         # Create DataFrame from companies
         df_companies = pd.DataFrame(companies)
@@ -45,21 +47,41 @@ class DataEnricher:
         df_companies['parent_company_id'] = None
         df_companies['parent_company_name'] = None
         df_companies['hierarchy_level'] = None
+        df_companies['global_ultimate_duns'] = None
+        df_companies['family_tree_members_count'] = None
+        df_companies['family_tree_roles'] = None
+
+        company_names = {
+            str(company.get('duns')): company.get('primary_name')
+            for company in companies
+            if company.get('duns') is not None
+        }
         
         # Join with family tree information
         for idx, row in df_companies.iterrows():
-            duns = row['duns']
+            duns = str(row['duns']) if pd.notna(row['duns']) else None
             
             try:
-                if duns in family_tree:
+                if duns is not None and duns in family_tree:
                     family_info = family_tree[duns]
                     parent_duns = family_info.get('parent_duns')
+                    df_companies.at[idx, 'hierarchy_level'] = family_info.get('hierarchy_level')
+                    df_companies.at[idx, 'global_ultimate_duns'] = family_info.get(
+                        'global_ultimate_duns'
+                    )
+                    df_companies.at[idx, 'family_tree_members_count'] = family_info.get(
+                        'family_tree_members_count'
+                    )
+                    df_companies.at[idx, 'family_tree_roles'] = family_info.get(
+                        'family_tree_roles'
+                    )
                     
                     if parent_duns:
-                        # Look up parent company name from the family tree or other companies
-                        # For now, we just store the parent DUNS
+                        parent_duns = str(parent_duns)
                         df_companies.at[idx, 'parent_company_id'] = parent_duns
-                        df_companies.at[idx, 'hierarchy_level'] = family_info.get('hierarchy_level')
+                        parent_info = family_tree.get(parent_duns, {})
+                        parent_name = parent_info.get('primary_name') or company_names.get(parent_duns)
+                        df_companies.at[idx, 'parent_company_name'] = parent_name
                         self.stats.enriched_companies += 1
                         logger.debug(f"Enriched DUNS {duns} with parent {parent_duns}")
                     else:
@@ -96,14 +118,27 @@ class DataEnricher:
             True if validation passes, False otherwise
         """
         logger.info("Validating enriched data")
+
+        required_columns = [
+            'duns', 'primary_name', 'parent_company_id', 'hierarchy_level',
+            'global_ultimate_duns', 'family_tree_members_count', 'family_tree_roles'
+        ]
+        missing_columns = [column for column in required_columns if column not in df.columns]
+        if missing_columns:
+            logger.error("Missing required columns: %s", missing_columns)
+            return False
         
         checks = {
             "No duplicate DUNS": df['duns'].nunique() == len(df),
             "DUNS column not null": df['duns'].notna().all(),
             "primary_name column not null": df['primary_name'].notna().all(),
-            "Expected columns present": all(col in df.columns for col in [
-                'duns', 'primary_name', 'parent_company_id', 'hierarchy_level'
-            ])
+            "No self-parent relationships": (
+                df['parent_company_id'].isna()
+                | (df['duns'].astype(str) != df['parent_company_id'].astype(str))
+            ).all(),
+            "Hierarchy levels are positive": (
+                df['hierarchy_level'].isna() | (df['hierarchy_level'] >= 1)
+            ).all(),
         }
         
         all_valid = True
