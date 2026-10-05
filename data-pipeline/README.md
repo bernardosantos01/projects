@@ -238,7 +238,7 @@ Run the unit tests:
 pytest tests/test_enricher.py -v
 ```
 
-The single focused pytest test checks direct-parent enrichment, root-company handling, hierarchy metadata, source-column preservation, processing counts, and output validation. A GitHub Actions workflow at the repository root (`.github/workflows/data-pipeline-tests.yml`) installs the pinned dependencies and runs this test on pushes and pull requests.
+The single focused pytest test checks direct-parent enrichment, root-company handling, hierarchy metadata, source-column preservation, processing counts, and output validation.
 
 ## Logging and error handling
 
