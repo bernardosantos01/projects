@@ -1,36 +1,11 @@
 # Entity-Relationship Diagram (ERD)
 
-This directory contains the Entity-Relationship Diagram for the Company Data Pipeline in multiple formats.
+The **proposed normalized relational model** for the Company Data Pipeline is shown in [`erd.svg`](erd.svg). Open or download the SVG for a scalable diagram, or export it to PNG using a browser, Inkscape, or another vector-graphics application.
 
-## Files
+> The ERD is a logical schema proposal. The current pipeline writes a flat enriched Parquet table; it does not create these normalized tables.
 
-- `erd.svg` - Vector format (scalable, best for web and printing)
-- `erd.png` - Raster format (good for embedding in documents)
+The diagram covers the company entity and its repeating detail tables, financial statements and line items, self-referencing ownership links, and the captured family-tree response/member/role hierarchy. For full field descriptions and modeling rationale, see the **Proposed normalized relational model** section in [`../README.md`](../README.md).
 
-## Diagram Overview
+## Export to PNG
 
-The ERD shows the normalized relational model for the data pipeline with the following key entities:
-
-- **COMPANIES** - Core company table with business identifiers and attributes
-- **COMPANY_ADDRESSES** - Company address records with distinct roles
-- **COMPANY_INDUSTRY_CODES** - Industry classifications from multiple systems
-- **COMPANY_FINANCIAL_STATEMENTS** - Financial reporting period data
-- **COMPANY_FINANCIAL_ITEMS** - Individual financial line items
-- **COMPANY_EMPLOYEE_OBSERVATIONS** - Employment data with scope tracking
-- **COMPANY_CONTACTS** - Phone, email, and website contact records
-- **COMPANY_REGISTRATION_NUMBERS** - Business registration identifiers
-- **COMPANY_STOCK_EXCHANGES** - Stock ticker and exchange information
-- **COMPANY_OWNERSHIP_LINKS** - Self-referencing parent/subsidiary relationships
-- **FAMILY_TREE_RESPONSES** - Captured hierarchy snapshots with metadata
-- **FAMILY_TREE_MEMBERS** - Individual member entries in hierarchy responses
-- **FAMILY_TREE_MEMBER_ROLES** - Role assignments for family tree members
-
-## Relationships
-
-All child tables maintain one-to-many relationships with their parent tables using foreign keys:
-- Primary key: `duns` (company DUNS number)
-- Foreign key references link child records back to companies
-- `COMPANY_OWNERSHIP_LINKS` is a self-referencing table for parent-subsidiary relationships
-- Family tree tables form a hierarchy: `FAMILY_TREE_RESPONSES` → `FAMILY_TREE_MEMBERS` → `FAMILY_TREE_MEMBER_ROLES`
-
-See the main README for detailed field descriptions and modeling rationale.
+Open `erd.svg` in a web browser and choose **Print → Save as PDF**, then convert the PDF to PNG; or use Inkscape's **Export** action and select PNG. The SVG itself is suitable for viewing and printing at any scale.
